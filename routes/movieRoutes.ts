@@ -2,7 +2,7 @@ import express from 'express';
 const router = express.Router();
 import MOVIE from "../models/movie"
 import { formSchema, formType, movieDataType } from '../types/formTypes';
-
+import { Op } from 'sequelize';
 
 
 
@@ -97,6 +97,40 @@ router.get("/download",async (req,res)=>{
     }
 
     
+})
+
+
+router.post("/filterRating",async(req,res)=>{ //filtering the rating and sending the desired output
+
+console.log(req.body)
+
+if(req.body.filter=="lessThanSeven"){
+
+    const movieList = await MOVIE.findAll({
+        where: {
+            rating: {
+              [Op.lte]: 7  // using the "less than" operator
+            }
+          }
+    })
+    
+    res.json({movieList})
+
+}
+
+else{
+    const movieList = await MOVIE.findAll({
+        where: {
+            rating: {
+              [Op.gte]: 7  // using the "greater than" operator
+            }
+          }
+    })
+
+    res.json({movieList})
+}
+
+
 })
 
 export default router
