@@ -8,7 +8,11 @@ cd into movieLibraryServer folder and run npm install to install the necessary d
 
 ----------------------------------------------------------------------------------------------------
 
-run the development server:
+replace the sequalizeConfig\seq.config.ts variables with your mySQL configurations to connect with your database
+
+
+----------------------------------------------------------------------------------------------------
+
 
 build the ts files with :
 
