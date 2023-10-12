@@ -21,4 +21,4 @@ now run the server with
 
 node  dist/index.js
 
-Open http://localhost:3000 with your browser to see the result.
+Open http://localhost:3001 with your browser to see the result.
