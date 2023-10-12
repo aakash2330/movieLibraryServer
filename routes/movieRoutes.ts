@@ -100,34 +100,81 @@ router.get("/download",async (req,res)=>{
 })
 
 
-router.post("/filterRating",async(req,res)=>{ //filtering the rating and sending the desired output
+router.post("/filter",async(req,res)=>{ //filtering the rating and sending the desired output
 
-console.log(req.body)
+const {ratingFilterValue,nameFilterValue} = req.body;
 
-if(req.body.filter=="lessThanSeven"){
+console.log({ratingFilterValue,nameFilterValue})
+
+if(ratingFilterValue=="lessThanSeven" && nameFilterValue=="betweenAandM" ){
 
     const movieList = await MOVIE.findAll({
         where: {
             rating: {
               [Op.lte]: 7  // using the "less than" operator
             }
+            ,
+            movieName: {
+                [Op.regexp]: '^[a-mA-M].*' // using the "regexp" operator
+              }
           }
     })
     
-    res.json({movieList})
+    return res.json({movieList})
 
 }
 
-else{
+if(ratingFilterValue=="lessThanSeven" && nameFilterValue=="betweenMandZ"){
+    const movieList = await MOVIE.findAll({
+        where: {
+            rating: {
+              [Op.lte]: 7  // using the "greater than" operator
+            },
+            movieName: {
+                [Op.regexp]: '^[n-zA-Z].*' // using the "regexp" operator
+              }
+          }
+    })
+
+  return  res.json({movieList})
+}
+
+
+
+if(ratingFilterValue=="greaterThanSeven" && nameFilterValue=="betweenAandM"){
     const movieList = await MOVIE.findAll({
         where: {
             rating: {
               [Op.gte]: 7  // using the "greater than" operator
-            }
+            },
+            movieName: {
+                [Op.regexp]: '^[a-mA-M].*' // using the "regexp" operator
+              }
           }
     })
 
-    res.json({movieList})
+    return res.json({movieList})
+}
+
+
+
+if(ratingFilterValue=="greaterThanSeven" && nameFilterValue=="betweenMandZ"){
+    const movieList = await MOVIE.findAll({
+        where: {
+            rating: {
+              [Op.gte]: 7  // using the "greater than" operator
+            },
+            movieName: {
+                [Op.regexp]: '^[n-zA-Z].*' // using the "regexp" operator
+              }
+          }
+    })
+
+    return res.json({movieList})
+}
+
+else {
+    return res.json({request:"failed"})
 }
 
 

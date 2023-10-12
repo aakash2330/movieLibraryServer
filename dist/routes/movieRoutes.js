@@ -84,27 +84,63 @@ router.get("/download", (req, res) => __awaiter(void 0, void 0, void 0, function
         res.json({ request: "failed" });
     }
 }));
-router.post("/filterRating", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(req.body);
-    if (req.body.filter == "lessThanSeven") {
+router.post("/filter", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { ratingFilterValue, nameFilterValue } = req.body;
+    console.log({ ratingFilterValue, nameFilterValue });
+    if (ratingFilterValue == "lessThanSeven" && nameFilterValue == "betweenAandM") {
         const movieList = yield movie_1.default.findAll({
             where: {
                 rating: {
                     [sequelize_1.Op.lte]: 7 // using the "less than" operator
+                },
+                movieName: {
+                    [sequelize_1.Op.regexp]: '^[a-mA-M].*' // using the "regexp" operator
                 }
             }
         });
-        res.json({ movieList });
+        return res.json({ movieList });
     }
-    else {
+    if (ratingFilterValue == "lessThanSeven" && nameFilterValue == "betweenMandZ") {
+        const movieList = yield movie_1.default.findAll({
+            where: {
+                rating: {
+                    [sequelize_1.Op.lte]: 7 // using the "greater than" operator
+                },
+                movieName: {
+                    [sequelize_1.Op.regexp]: '^[n-zA-Z].*' // using the "regexp" operator
+                }
+            }
+        });
+        return res.json({ movieList });
+    }
+    if (ratingFilterValue == "greaterThanSeven" && nameFilterValue == "betweenAandM") {
         const movieList = yield movie_1.default.findAll({
             where: {
                 rating: {
                     [sequelize_1.Op.gte]: 7 // using the "greater than" operator
+                },
+                movieName: {
+                    [sequelize_1.Op.regexp]: '^[a-mA-M].*' // using the "regexp" operator
                 }
             }
         });
-        res.json({ movieList });
+        return res.json({ movieList });
+    }
+    if (ratingFilterValue == "greaterThanSeven" && nameFilterValue == "betweenMandZ") {
+        const movieList = yield movie_1.default.findAll({
+            where: {
+                rating: {
+                    [sequelize_1.Op.gte]: 7 // using the "greater than" operator
+                },
+                movieName: {
+                    [sequelize_1.Op.regexp]: '^[n-zA-Z].*' // using the "regexp" operator
+                }
+            }
+        });
+        return res.json({ movieList });
+    }
+    else {
+        return res.json({ request: "failed" });
     }
 }));
 exports.default = router;
