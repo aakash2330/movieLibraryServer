@@ -5,6 +5,9 @@ After cloning the repsitory
 
 cd into movieLibraryServer folder and run npm install to install the necessary dependencies
 
+
+----------------------------------------------------------------------------------------------------
+
 run the development server:
 
 build the ts files with :
