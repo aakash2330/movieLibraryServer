@@ -1,0 +1,27 @@
+{
+  "name": "movie-library",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/body-parser": "^1.19.3",
+    "@types/cors": "^2.8.14",
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.19",
+    "mysql2": "^3.6.1",
+    "nodemon": "^3.0.1",
+    "sequelize": "^6.33.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.4",
+    "@types/sequelize": "^4.28.16",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  }
+}
