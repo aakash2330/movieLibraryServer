@@ -7,9 +7,12 @@ cd into movieLibraryServer folder and run npm install to install the necessary d
 
 run the development server:
 
-build the ts files with 
+build the ts files with :
 
 tsc
+
+
+----------------------------------------------------------------------------------------------------
 
 now run the server with 
 
