@@ -73,18 +73,74 @@ catch(error){
 
 
 
-// route to get paginated list of users back req --> export type pageinatedType = { page:number, limit:number}
-router.post("/paginatedList",async(req,res)=>{
+
+
+// findAll: ({page, limit, orderBy, sortBy, keyword}) => new Promise(async (resolve, reject) => {
+//     try {
+
+//         const query = {}
+
+//         if (keyword) {
+//             query.email = {[Op.substring]: keyword}
+//         }
+
+//         const queries = {
+//             offset: (page - 1) * limit,
+//             limit
+//         }       
+
+//         if (orderBy) {
+//             queries.order = [[orderBy, sortBy]]
+//         }
+
+        
+//         const data = await Customer.findAndCountAll({
+//             where: query,
+//             ...queries
+//         })
+
+//         const res = {
+//             totalPages: Math.ceil(data?.count / limit),
+//             totalItems: data?.count,
+//             data: data?.rows
+//         }
+
+//         resolve(res)
+
+//     } catch (error) {
+//         reject(error)
+//     }
+// }),
+
+
+
+/* route to get paginated list of users back req --> export type pageinatedType =  {
+    "page":1,
+    "limit":5,
+    "orderBy":"movieName",
+    "sortBy":"desc",
+    "keyword":"movie"
+}
+*/
+
+router.post("/customList",async(req,res)=>{
   try{
     const parsedInput =  paginationSchema.safeParse(req.body);
     if(!parsedInput.success){
         return res.json({error:parsedInput.error})  //return if the input type is incorrect
     }
     if(parsedInput.success){
-        const {page,limit} = parsedInput.data
+        const {page,limit,keyword,orderBy,sortBy} = parsedInput.data
         const data = await MOVIE.findAndCountAll({
                 offset:(page-1)*limit,
-                limit
+                limit,
+                order:[[orderBy,sortBy]],
+                where:{
+                    movieName:{
+                        [Op.substring]: keyword
+                    }
+                    
+                }
         })
 
         return res.json({
