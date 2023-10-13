@@ -3,6 +3,7 @@ const router = express.Router();
 import MOVIE from "../models/movie"
 import { formSchema, formType, movieDataType } from '../types/formTypes';
 import { Op } from 'sequelize';
+import { paginationSchema } from '../types/getDataTypes';
 
 
 
@@ -69,6 +70,35 @@ catch(error){
 }
 })
 
+
+
+
+// route to get paginated list of users back req --> export type pageinatedType = { page:number, limit:number}
+router.post("/paginatedList",async(req,res)=>{
+  try{
+    const parsedInput =  paginationSchema.safeParse(req.body);
+    if(!parsedInput.success){
+        return res.json({error:parsedInput.error})  //return if the input type is incorrect
+    }
+    if(parsedInput.success){
+        const {page,limit} = parsedInput.data
+        const data = await MOVIE.findAndCountAll({
+                offset:(page-1)*limit,
+                limit
+        })
+
+        return res.json({
+            totalPages:Math.ceil(data.count/limit),
+            totalItem:data.count,
+            data:data.rows
+        })
+    }
+
+  }
+  catch(error){
+    return  res.json({request:"failed"})
+  }
+})
 
 
 

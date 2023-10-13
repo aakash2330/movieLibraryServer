@@ -17,6 +17,7 @@ const router = express_1.default.Router();
 const movie_1 = __importDefault(require("../models/movie"));
 const formTypes_1 = require("../types/formTypes");
 const sequelize_1 = require("sequelize");
+const getDataTypes_1 = require("../types/getDataTypes");
 function getMoviesList() {
     return __awaiter(this, void 0, void 0, function* () {
         const movieList = yield movie_1.default.findAll();
@@ -64,6 +65,30 @@ router.get("/list", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
     catch (error) {
         res.json({ request: "failed" });
+    }
+}));
+// route to get paginated list of users back req --> export type pageinatedType = { page:number, limit:number}
+router.post("/paginatedList", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const parsedInput = getDataTypes_1.paginationSchema.safeParse(req.body);
+        if (!parsedInput.success) {
+            return res.json({ error: parsedInput.error }); //return if the input type is incorrect
+        }
+        if (parsedInput.success) {
+            const { page, limit } = parsedInput.data;
+            const data = yield movie_1.default.findAndCountAll({
+                offset: (page - 1) * limit,
+                limit
+            });
+            return res.json({
+                totalPages: Math.ceil(data.count / limit),
+                totalItem: data.count,
+                data: data.rows
+            });
+        }
+    }
+    catch (error) {
+        return res.json({ request: "failed" });
     }
 }));
 // route to download list of movies in a csv file 

@@ -42,3 +42,5 @@ export type movieDataType = {
     duration: number,
     rating: number
 }
+
+
