@@ -94,7 +94,14 @@ router.get("/list", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 //         reject(error)
 //     }
 // }),
-// route to get paginated list of users back req --> export type pageinatedType = { page:number, limit:number}
+/* route to get paginated list of users back req --> export type pageinatedType =  {
+    "page":1,
+    "limit":5,
+    "orderBy":"movieName",
+    "sortBy":"desc",
+    "keyword":"movie"
+}
+*/
 router.post("/customList", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const parsedInput = getDataTypes_1.paginationSchema.safeParse(req.body);
@@ -106,7 +113,7 @@ router.post("/customList", (req, res) => __awaiter(void 0, void 0, void 0, funct
             const data = yield movie_1.default.findAndCountAll({
                 offset: (page - 1) * limit,
                 limit,
-                order: [["movieName", sortBy]],
+                order: [[orderBy, sortBy]],
                 where: {
                     movieName: {
                         [sequelize_1.Op.substring]: keyword
@@ -143,62 +150,27 @@ router.get("/download", (req, res) => __awaiter(void 0, void 0, void 0, function
     }
 }));
 router.post("/filter", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { ratingFilterValue, nameFilterValue } = req.body;
-    console.log({ ratingFilterValue, nameFilterValue });
-    if (ratingFilterValue == "lessThanSeven" && nameFilterValue == "betweenAandM") {
+    const { filter } = req.body;
+    console.log({ filter });
+    if (filter == "lessThanSeven") {
         const movieList = yield movie_1.default.findAll({
             where: {
                 rating: {
                     [sequelize_1.Op.lte]: 7 // using the "less than" operator
-                },
-                movieName: {
-                    [sequelize_1.Op.regexp]: '^[a-mA-M].*' // using the "regexp" operator
-                }
-            }
-        });
-        return res.json({ movieList });
-    }
-    if (ratingFilterValue == "lessThanSeven" && nameFilterValue == "betweenMandZ") {
-        const movieList = yield movie_1.default.findAll({
-            where: {
-                rating: {
-                    [sequelize_1.Op.lte]: 7 // using the "greater than" operator
-                },
-                movieName: {
-                    [sequelize_1.Op.regexp]: '^[n-zA-Z].*' // using the "regexp" operator
-                }
-            }
-        });
-        return res.json({ movieList });
-    }
-    if (ratingFilterValue == "greaterThanSeven" && nameFilterValue == "betweenAandM") {
-        const movieList = yield movie_1.default.findAll({
-            where: {
-                rating: {
-                    [sequelize_1.Op.gte]: 7 // using the "greater than" operator
-                },
-                movieName: {
-                    [sequelize_1.Op.regexp]: '^[a-mA-M].*' // using the "regexp" operator
-                }
-            }
-        });
-        return res.json({ movieList });
-    }
-    if (ratingFilterValue == "greaterThanSeven" && nameFilterValue == "betweenMandZ") {
-        const movieList = yield movie_1.default.findAll({
-            where: {
-                rating: {
-                    [sequelize_1.Op.gte]: 7 // using the "greater than" operator
-                },
-                movieName: {
-                    [sequelize_1.Op.regexp]: '^[n-zA-Z].*' // using the "regexp" operator
                 }
             }
         });
         return res.json({ movieList });
     }
     else {
-        return res.json({ request: "failed" });
+        const movieList = yield movie_1.default.findAll({
+            where: {
+                rating: {
+                    [sequelize_1.Op.gte]: 7 // using the "less than" operator
+                }
+            }
+        });
+        return res.json({ movieList });
     }
 }));
 exports.default = router;
