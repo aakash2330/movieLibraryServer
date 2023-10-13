@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.formSchema = void 0;
+exports.editMovieSchema = exports.movieDataSchema = exports.formSchema = void 0;
 const zod_1 = require("zod");
 exports.formSchema = zod_1.z.object({
     movieName: zod_1.z.string().min(2, "Must be at least 2 characters.").max(1000, "Must not be more than 1000 characters"),
@@ -32,4 +32,13 @@ exports.formSchema = zod_1.z.object({
             return error;
         }
     }, { message: "Rating should be between 0 and 10" })
+});
+exports.movieDataSchema = zod_1.z.object({
+    movieName: zod_1.z.string().min(2, "Must be at least 2 characters.").max(1000, "Must not be more than 1000 characters"),
+    duration: zod_1.z.number(),
+    rating: zod_1.z.number()
+});
+exports.editMovieSchema = zod_1.z.object({
+    orignalMovieData: exports.movieDataSchema,
+    newMovieData: exports.formSchema
 });

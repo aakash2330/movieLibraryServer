@@ -1,9 +1,10 @@
 import express from 'express';
 const router = express.Router();
 import MOVIE from "../models/movie"
-import { formSchema, formType, movieDataType } from '../types/formTypes';
+import { editMovieSchema, formSchema, formType, movieDataType } from '../types/formTypes';
 import { Op } from 'sequelize';
 import { paginationSchema } from '../types/getDataTypes';
+import { converMovieData } from '../util/movieDataConverter';
 
 
 
@@ -71,57 +72,6 @@ catch(error){
 })
 
 
-
-
-
-
-// findAll: ({page, limit, orderBy, sortBy, keyword}) => new Promise(async (resolve, reject) => {
-//     try {
-
-//         const query = {}
-
-//         if (keyword) {
-//             query.email = {[Op.substring]: keyword}
-//         }
-
-//         const queries = {
-//             offset: (page - 1) * limit,
-//             limit
-//         }       
-
-//         if (orderBy) {
-//             queries.order = [[orderBy, sortBy]]
-//         }
-
-        
-//         const data = await Customer.findAndCountAll({
-//             where: query,
-//             ...queries
-//         })
-
-//         const res = {
-//             totalPages: Math.ceil(data?.count / limit),
-//             totalItems: data?.count,
-//             data: data?.rows
-//         }
-
-//         resolve(res)
-
-//     } catch (error) {
-//         reject(error)
-//     }
-// }),
-
-
-
-/* route to get paginated list of users back req --> export type pageinatedType =  {
-    "page":1,
-    "limit":5,
-    "orderBy":"movieName",
-    "sortBy":"desc",
-    "keyword":"movie"
-}
-*/
 
 router.post("/customList",async(req,res)=>{
   try{
@@ -219,6 +169,37 @@ else {
     
     return res.json({movieList})
 
+}
+})
+
+
+router.put("/edit",async(req,res)=>{
+try{
+
+    const parsedInput = editMovieSchema.safeParse(req.body);
+    if(!parsedInput.success){
+        return res.json({error:parsedInput.error})  //return if the input type is incorrect
+    }
+
+    if(parsedInput.success){
+       
+        const {newMovieData,orignalMovieData}=parsedInput.data;
+        const convertednewMovieData:movieDataType = converMovieData(newMovieData);
+        console.log({convertednewMovieData,orignalMovieData})
+
+        const data = await MOVIE.update(
+            convertednewMovieData ,{
+            where: {
+                movieName:orignalMovieData.movieName, //add other fileds in future
+              }
+        })
+        console.log(data)
+        res.json({request:"movie-edited"})
+    }
+
+}
+catch(error){
+    res.json({request:"failed"})
 }
 })
 

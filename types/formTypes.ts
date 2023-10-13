@@ -35,12 +35,28 @@ export const formSchema = z.object({
     }, { message: "Rating should be between 0 and 10" })
 })
 
+
+
+export const movieDataSchema = z.object({
+    movieName: z.string().min(2,"Must be at least 2 characters.",).max(1000 , "Must not be more than 1000 characters"),
+    duration:z.number(),
+    rating: z.number()
+})
+
+
+
+export const editMovieSchema = z.object({
+
+    orignalMovieData:movieDataSchema,
+    newMovieData:formSchema
+
+})
+
+
+export type editMovieSchemaType = z.infer<typeof editMovieSchema>
+
+
 export type formType = z.infer<typeof formSchema>
 
-export type movieDataType = {
-    movieName:string,
-    duration: number,
-    rating: number
-}
-
+export type movieDataType = z.infer<typeof movieDataSchema>
 

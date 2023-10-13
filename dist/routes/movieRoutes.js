@@ -18,6 +18,7 @@ const movie_1 = __importDefault(require("../models/movie"));
 const formTypes_1 = require("../types/formTypes");
 const sequelize_1 = require("sequelize");
 const getDataTypes_1 = require("../types/getDataTypes");
+const movieDataConverter_1 = require("../util/movieDataConverter");
 function getMoviesList() {
     return __awaiter(this, void 0, void 0, function* () {
         const movieList = yield movie_1.default.findAll();
@@ -67,41 +68,6 @@ router.get("/list", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         res.json({ request: "failed" });
     }
 }));
-// findAll: ({page, limit, orderBy, sortBy, keyword}) => new Promise(async (resolve, reject) => {
-//     try {
-//         const query = {}
-//         if (keyword) {
-//             query.email = {[Op.substring]: keyword}
-//         }
-//         const queries = {
-//             offset: (page - 1) * limit,
-//             limit
-//         }       
-//         if (orderBy) {
-//             queries.order = [[orderBy, sortBy]]
-//         }
-//         const data = await Customer.findAndCountAll({
-//             where: query,
-//             ...queries
-//         })
-//         const res = {
-//             totalPages: Math.ceil(data?.count / limit),
-//             totalItems: data?.count,
-//             data: data?.rows
-//         }
-//         resolve(res)
-//     } catch (error) {
-//         reject(error)
-//     }
-// }),
-/* route to get paginated list of users back req --> export type pageinatedType =  {
-    "page":1,
-    "limit":5,
-    "orderBy":"movieName",
-    "sortBy":"desc",
-    "keyword":"movie"
-}
-*/
 router.post("/customList", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const parsedInput = getDataTypes_1.paginationSchema.safeParse(req.body);
@@ -171,6 +137,29 @@ router.post("/filter", (req, res) => __awaiter(void 0, void 0, void 0, function*
             }
         });
         return res.json({ movieList });
+    }
+}));
+router.put("/edit", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const parsedInput = formTypes_1.editMovieSchema.safeParse(req.body);
+        if (!parsedInput.success) {
+            return res.json({ error: parsedInput.error }); //return if the input type is incorrect
+        }
+        if (parsedInput.success) {
+            const { newMovieData, orignalMovieData } = parsedInput.data;
+            const convertednewMovieData = (0, movieDataConverter_1.converMovieData)(newMovieData);
+            console.log({ convertednewMovieData, orignalMovieData });
+            const data = yield movie_1.default.update(convertednewMovieData, {
+                where: {
+                    movieName: orignalMovieData.movieName, //add other fileds in future
+                }
+            });
+            console.log(data);
+            res.json({ request: "movie-edited" });
+        }
+    }
+    catch (error) {
+        res.json({ request: "failed" });
     }
 }));
 exports.default = router;
